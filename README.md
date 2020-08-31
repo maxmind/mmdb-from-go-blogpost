@@ -24,13 +24,13 @@ AcmeCorp has three departments:
 - Development, whose IPs come from the 56.1.0.0/16 range, and
 - Management, whose IPs come from the 56.2.0.0/16 range.
 
-Members of the SRE department have access to all three of AcmeCorp's environments, `development`, `staging`, and `production`. Members of the Development and Management departments have access to the `development` and `staging` environments (but not `production`).
+Members of the SRE department have access to all three of AcmeCorp's environments, `development`, `staging`, and `production`. Members of the Development and Management departments have access to the `development` and `staging` environments (but not to `production`).
 
-The GeoLite2 Country MMDB file has a map, or nothing, associated with every IP range.
+The GeoLite2 Country MMDB file has a map, or no record, associated with every IP range.
 
-For each of the AcmeCorp ranges, we're going to make sure a map does get returned when we query for the ranges or any subranges of them, and that the map will contain `AcmeCorp.Environments` and `AcmeCorp.DeptName` keys, as well as any keys that were contained in the original GeoLite2 Country record, if one existed. More on this later.
+For each of the AcmeCorp ranges, we're going to make sure a map record does get returned when we query for the ranges or any subranges of them, and that the map will contain `AcmeCorp.Environments` and `AcmeCorp.DeptName` keys, as well as any keys that were contained in the original GeoLite2 Country record, if one existed. More on this later.
 
-### Adding the new fields to GeoLite2 Country
+### The steps we're going to take
 
 We're going to [write some Go code](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/main.go) that makes use of the MaxMind [`mmdbwriter`](https://pkg.go.dev/github.com/maxmind/mmdbwriter) Go module to:
 
@@ -54,15 +54,17 @@ me@myhost:~/dev/mmdb-from-go-blogpost $ git clone https://github.com/maxmind/mmd
 me@myhost:~/dev/mmdb-from-go-blogpost $ cd mmdb-from-go-blogpost
 ```
 
-Now I’m going to break down the contents of main.go from the repo, the code that will perform steps 1-3 of the tutorial. If you prefer to read the code directly, you can skip to the next section.
+Now I’m going to break down the contents of `main.go` from the repo, the code that will perform steps 1-3 of the tutorial. If you prefer to read the code directly, you can skip to the next section.
 
-What follows is an annotated version of `main.go` from the repo. You don't actually have to do anything more until you reach the next section of this document; we're just describing the program so that you can follow along. Alternatively, you can skip to the next section or stick to reading the code if this explanation is all familiar to you.
-
-Most Go programs begin with a `package main`, a list of `import`s, and a `main` function. These define the start of the source code file that contains the program, the list of other packages that the program depends upon, and the initial point in the program's execution, respectively. In our case, the imported packages include some from the standard library: [`log`](https://golang.org/pkg/log/), which we use for outputting in error scenarios; [`net`](https://golang.org/pkg/net/), for the `net.ParseCIDR` function and the `net.IPNet` type, which we use when inserting new data into the MMDB tree; and [`os`](https://golang.org/pkg/os/), which we use when creating a new file into which we will write the MMDB tree. We also import some packages from MaxMind's [`mmdbwriter`](https://github.com/maxmind/mmdbwriter/) repo, which are designed specifically for building MMDB files and for working with MMDB trees -- you'll see how we use those below.
+All Go programs begin with a `package main`, indicating that this file will contain a `main` function, the start of our program's execution. This program is on exception.
 
 ```go
 package main
+```
 
+Most programs have a list of `import`ed packages next. In our case, the list of packages imported include some from the standard library: [`log`](https://golang.org/pkg/log/), which we use for outputting in error scenarios; [`net`](https://golang.org/pkg/net/), for the `net.ParseCIDR` function and the `net.IPNet` type, which we use when inserting new data into the MMDB tree; and [`os`](https://golang.org/pkg/os/), which we use when creating a new file into which we will write the MMDB tree. We also import some packages from MaxMind's [`mmdbwriter`](https://github.com/maxmind/mmdbwriter/) repo, which are designed specifically for building MMDB files and for working with MMDB trees -- you'll see how we use those below.
+
+```go
 import (
 	"log"
 	"net"
@@ -72,13 +74,12 @@ import (
 	"github.com/maxmind/mmdbwriter/inserter"
 	"github.com/maxmind/mmdbwriter/mmdbtype"
 )
-
-func main() {
 ```
 
-Here we're at the start of the program execution. We begin by loading the existing database, `GeoLite2-Country.mmdb`, that we're going to augment.
+Now we're at the start of the program execution. We begin by loading the existing database, `GeoLite2-Country.mmdb`, that we're going to augment.
 
 ```go
+func main() {
 	// Load the database we wish to augment.
 	writer, err := mmdbwriter.Load("GeoLite2-Country.mmdb", mmdbwriter.Options{})
 	if err != nil {
