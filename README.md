@@ -97,13 +97,12 @@ Having loaded the existing GeoLite2 Country database, we begin defining the data
 	}
 ```
 
-Next, we're introduced to the [`mmdbtype.DataType`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#DataType) [interface](https://gobyexample.com/interfaces). Every piece of data that is stored in the MMDB file is strongly typed and conforms to this interface.
+Next, we're introduced to the [`mmdbtype.DataType`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#DataType) [interface](https://gobyexample.com/interfaces): Every piece of data that is attached to an IP or IP range in an MMDB file conforms to this interface.
 
-While the MaxMind DB spec does not require it, all of the MMDB files built by MaxMind have a map or no record attached to each IP; i.e. if a record exists, its outermost value is a map, which for our purposes is a [`mmdbtype.Map`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#Map), which satisfies the `mmdbtype.DataType` interface.
+While the MaxMind DB spec does not require it, all of the MMDB files built by MaxMind have either a map as a record or no record attached to each IP range; i.e. if a record exists for an IP range, its outermost value is a map, which for our purposes is a [`mmdbtype.Map`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#Map), which satisfies the `mmdbtype.DataType` interface.
 
-If you look at the output of running the `mmdbinspect -db GeoLite2-Country.mmdb 56.0.0.1` command in your terminal, examining the `$.[0].Records[0].Record` [JSONPath](https://goessner.net/articles/JsonPath/) (i.e. the sole record, stripped of its wrappers), then you'll see that it is a JSON Object, which as expected corresponds to the `mmdbtype.Map` type.
+\[An aside: If you look at the output of running the `mmdbinspect -db GeoLite2-Country.mmdb 56.0.0.1` command in your terminal, examining the `$.[0].Records[0].Record` [JSONPath](https://goessner.net/articles/JsonPath/) (i.e. the sole record, stripped of its wrappers), then you'll see that it is a JSON Object, which as expected corresponds to the `mmdbtype.Map` type.\]
 
-We're going to take advantage of this, adding the two previously mentioned key/value pairs previously to the map, namely key `AcmeCorp.Environments` (whose value will be an [`mmdbtype.Slice`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#Slice), a [slice](https://gobyexample.com/slices) of [`mmdbtype.String`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#String)s containing the allowed environment strings for an IP range), and key `AcmeCorp.DeptName` (whose value will be an [`mmdbtype.String`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#String) that is the name of the department for an IP range).
 
 ```go
 	sreData := mmdbtype.Map{
