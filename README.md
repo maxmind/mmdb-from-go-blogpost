@@ -56,13 +56,10 @@ me@myhost:~/dev/mmdb-from-go-blogpost $ cd mmdb-from-go-blogpost
 
 Now I’m going to break down the contents of `main.go` from the repo, the code that will perform steps 1-3 of the tutorial. If you prefer to read the code directly, you can skip to the next section.
 
-All Go programs begin with a `package main`, indicating that this file will contain a `main` function, the start of our program's execution. This program is no exception.
-
 ```go
 package main
 ```
-
-Most programs have a list of `import`ed packages next. In our case, the list of packages imported include some from the standard library: [`log`](https://golang.org/pkg/log/), which we use for outputting in error scenarios; [`net`](https://golang.org/pkg/net/), for the `net.ParseCIDR` function and the `net.IPNet` type, which we use when inserting new data into the MMDB tree; and [`os`](https://golang.org/pkg/os/), which we use when creating a new file into which we will write the MMDB tree. We also import some packages from MaxMind's [`mmdbwriter`](https://github.com/maxmind/mmdbwriter/) repo, which are designed specifically for building MMDB files and for working with MMDB trees -- you'll see how we use those below.
+All Go programs begin with a `package main`, indicating that this file will contain a `main` function, the start of our program's execution. This program is no exception.
 
 ```go
 import (
@@ -75,8 +72,7 @@ import (
 	"github.com/maxmind/mmdbwriter/mmdbtype"
 )
 ```
-
-Now we're at the start of the program execution. We begin by loading the existing database, `GeoLite2-Country.mmdb`, that we're going to augment.
+Most programs have a list of `import`ed packages next. In our case, the list of packages imported include some from the standard library: [`log`](https://golang.org/pkg/log/), which we use for outputting in error scenarios; [`net`](https://golang.org/pkg/net/), for the `net.ParseCIDR` function and the `net.IPNet` type, which we use when inserting new data into the MMDB tree; and [`os`](https://golang.org/pkg/os/), which we use when creating a new file into which we will write the MMDB tree. We also import some packages from MaxMind's [`mmdbwriter`](https://github.com/maxmind/mmdbwriter/) repo, which are designed specifically for building MMDB files and for working with MMDB trees -- you'll see how we use those below.
 
 ```go
 func main() {
@@ -86,8 +82,7 @@ func main() {
 		log.Fatal(err)
 	}
 ```
-
-Having loaded the existing GeoLite2 Country database, we begin defining the data we wish to augment it with. The second return value of the [`net.ParseCIDR()`](https://golang.org/pkg/net/#ParseCIDR) function is of type [`*net.IPNet`](https://golang.org/pkg/net/#IPNet), which is what we need for the first parameter for our upcoming [`writer.InsertFunc()`](https://pkg.go.dev/github.com/maxmind/mmdbwriter?tab=doc#Tree.InsertFunc) call, so we use `net.ParseCIDR` to go from the `string`-literal CIDR form `"56.0.0.0/16"` to the desired `*net.IPnet`.
+Now we're at the start of the program execution. We begin by loading the existing database, `GeoLite2-Country.mmdb`, that we're going to augment.
 
 ```go
 	// Define and insert the new data.
@@ -96,13 +91,7 @@ Having loaded the existing GeoLite2 Country database, we begin defining the data
 		log.Fatal(err)
 	}
 ```
-
-Next, we're introduced to the [`mmdbtype.DataType`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#DataType) [interface](https://gobyexample.com/interfaces): Every piece of data that is attached to an IP or IP range in an MMDB file conforms to this interface.
-
-While the MaxMind DB spec does not require it, all of the MMDB files built by MaxMind have either a map as a record or no record attached to each IP range; i.e. if a record exists for an IP range, its outermost value is a map, which for our purposes is a [`mmdbtype.Map`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#Map), which satisfies the `mmdbtype.DataType` interface.
-
-\[An aside: If you look at the output of running the `mmdbinspect -db GeoLite2-Country.mmdb 56.0.0.1` command in your terminal, examining the `$.[0].Records[0].Record` [JSONPath](https://goessner.net/articles/JsonPath/) (i.e. the sole record, stripped of its wrappers), then you'll see that it is a JSON Object, which as expected corresponds to the `mmdbtype.Map` type.\]
-
+Having loaded the existing GeoLite2 Country database, we begin defining the data we wish to augment it with. The second return value of the [`net.ParseCIDR()`](https://golang.org/pkg/net/#ParseCIDR) function is of type [`*net.IPNet`](https://golang.org/pkg/net/#IPNet), which is what we need for the first parameter for our upcoming [`writer.InsertFunc()`](https://pkg.go.dev/github.com/maxmind/mmdbwriter?tab=doc#Tree.InsertFunc) call, so we use `net.ParseCIDR` to go from the `string`-literal CIDR form `"56.0.0.0/16"` to the desired `*net.IPnet`.
 
 ```go
 	sreData := mmdbtype.Map{
@@ -114,18 +103,22 @@ While the MaxMind DB spec does not require it, all of the MMDB files built by Ma
 		"AcmeCorp.DeptName": mmdbtype.String("SRE"),
 	}
 ```
+Next, we're introduced to the [`mmdbtype.DataType`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#DataType) [interface](https://gobyexample.com/interfaces): Every piece of data that is attached to an IP or IP range in an MMDB file conforms to this interface.
 
-Now that we've got our data, we insert it into the MMDB tree using the [`inserter.TopLevelMergeWith`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/inserter?tab=doc#TopLevelMergeWith) strategy, leaving us with an MMDB tree with the AcmeCorp SRE IPs in the 56.0.0.0/16 range, whose maps contain the new environment and department name keys in addition to whatever GeoLite2 Country data they returned previously. (Note that we carefully picked non-clashing, top-level keys; no key in the GeoLite2 Country data starts with `AcmeCorp.`)
+While the MaxMind DB spec does not require it, all of the MMDB files built by MaxMind have either a map as a record or no record attached to each IP range; i.e. if a record exists for an IP range, its outermost value is a map, which for our purposes is a [`mmdbtype.Map`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#Map), which satisfies the `mmdbtype.DataType` interface.
 
-What happens if there is an IP for which no record exists? With the `inserter.TopLevelMergeWith` strategy, this IP will also happily take our new top-level keys as well.
+\[An aside: If you look at the output of running the `mmdbinspect -db GeoLite2-Country.mmdb 56.0.0.1` command in your terminal, examining the `$.[0].Records[0].Record` [JSONPath](https://goessner.net/articles/JsonPath/) (i.e. the sole record, stripped of its wrappers), then you'll see that it is a JSON Object, which as expected corresponds to the `mmdbtype.Map` type.\]
+
+We're going to take advantage of this, adding the two previously mentioned key/value pairs previously to all the existing maps for those IP ranges, where they exist, or creating a map with just those key/value pairs, where one didn't exist. The keys are `AcmeCorp.Environments` (whose value will be an [`mmdbtype.Slice`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#Slice), a [slice](https://gobyexample.com/slices) of [`mmdbtype.String`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#String)s containing the allowed environment strings for an IP range), and `AcmeCorp.DeptName` (whose value will be an [`mmdbtype.String`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#String) that is the name of the department for an IP range).
 
 ```go
 	if err := writer.InsertFunc(sreNet, inserter.TopLevelMergeWith(sreData)); err != nil {
 		log.Fatal(err)
 	}
 ```
+Now that we've got our data, we insert it into the MMDB tree using the [`inserter.TopLevelMergeWith`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/inserter?tab=doc#TopLevelMergeWith) strategy, leaving us with an MMDB tree with the AcmeCorp SRE IPs in the 56.0.0.0/16 range, whose maps contain the new environment and department name keys in addition to whatever GeoLite2 Country data they returned previously. (Note that we carefully picked non-clashing, top-level keys; no key in the GeoLite2 Country data starts with `AcmeCorp.`)
 
-That takes care of the SRE department. We repeat the process for the Development and Management departments, taking care to update the range itself, the list of environments, and the department name as we go.
+What happens if there is an IP for which no record exists? With the `inserter.TopLevelMergeWith` strategy, this IP will also happily take our new top-level keys as well.
 
 ```go
 	_, devNet, err := net.ParseCIDR("56.1.0.0/16")
@@ -158,8 +151,7 @@ That takes care of the SRE department. We repeat the process for the Development
 		log.Fatal(err)
 	}
 ```
-
-Finally we write the new database to disk.
+We repeat the process for the Development and Management departments, taking care to update the range itself, the list of environments, and the department name as we go.
 
 ```go
 	// Write the newly augmented DB to the filesystem.
@@ -173,6 +165,7 @@ Finally we write the new database to disk.
 	}
 }
 ```
+Finally we write the new database to disk.
 
 ### Building the code and running it
 
