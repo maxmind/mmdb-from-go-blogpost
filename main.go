@@ -24,12 +24,12 @@ func main() {
 		log.Fatal(err)
 	}
 	sreData := mmdbtype.Map{
+		"AcmeCorp.DeptName": mmdbtype.String("SRE"),
 		"AcmeCorp.Environments": mmdbtype.Slice{
 			mmdbtype.String("development"),
 			mmdbtype.String("staging"),
 			mmdbtype.String("production"),
 		},
-		"AcmeCorp.DeptName": mmdbtype.String("SRE"),
 	}
 	if err := writer.InsertFunc(sreNet, inserter.TopLevelMergeWith(sreData)); err != nil {
 		log.Fatal(err)
@@ -40,11 +40,11 @@ func main() {
 		log.Fatal(err)
 	}
 	devData := mmdbtype.Map{
+		"AcmeCorp.DeptName": mmdbtype.String("Development"),
 		"AcmeCorp.Environments": mmdbtype.Slice{
 			mmdbtype.String("development"),
 			mmdbtype.String("staging"),
 		},
-		"AcmeCorp.DeptName": mmdbtype.String("Development"),
 	}
 	if err := writer.InsertFunc(devNet, inserter.TopLevelMergeWith(devData)); err != nil {
 		log.Fatal(err)
@@ -55,11 +55,11 @@ func main() {
 		log.Fatal(err)
 	}
 	mgmtData := mmdbtype.Map{
+		"AcmeCorp.DeptName": mmdbtype.String("Management"),
 		"AcmeCorp.Environments": mmdbtype.Slice{
 			mmdbtype.String("development"),
 			mmdbtype.String("staging"),
 		},
-		"AcmeCorp.DeptName": mmdbtype.String("Management"),
 	}
 	if err := writer.InsertFunc(mgmtNet, inserter.TopLevelMergeWith(mgmtData)); err != nil {
 		log.Fatal(err)
