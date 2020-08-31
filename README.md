@@ -2,9 +2,9 @@
 
 [MaxMind DB](https://github.com/maxmind/MaxMind-DB/blob/master/MaxMind-DB-spec.md) (or MMDB) files facilitate the storage and retrieval of data in connection with IPs and IP ranges, making queries for such data very fast and easy to perform. While MMDB files are usable on a variety of platforms and in a number of different programming languages, this article will focus on building MMDB files using the [Go programming language](https://golang.org/).
 
-MaxMind offers several prebuilt MMDB files, like the free [GeoLite2 Country](https://dev.maxmind.com/geoip/geoip2/geolite2/) MMDB file. For many situations these MMDB files are useful enough as is. If, however, you have your own data associated with IP ranges, you can create hybrid MMDB files, augmenting existing MMDB contents with your own data. In this article, we're going to add details about a fictional company called AcmeCorp's IP ranges to the GeoLite2 Country MMDB file. We'll be building a new MMDB file, one that contains both MaxMind and AcmeCorp data.
+MaxMind offers several prebuilt MMDB files, like the free [GeoLite2 Country](https://dev.maxmind.com/geoip/geoip2/geolite2/) MMDB file. For many situations these MMDB files are useful enough as is. If, however, you have your own data associated with IP ranges, you can create hybrid MMDB files, augmenting existing MMDB contents with your own data. In this article, we're going to add details about a fictional company's IP ranges to the GeoLite2 Country MMDB file. We'll be building a new MMDB file, one that contains both MaxMind's and our fictional company's data.
 
-Another option is available if you want to [create an MMDB file from scratch](https://github.com/maxmind/mmdbwriter/blob/master/examples/asn-writer/main.go): It can be done, but that's not the point of this article.
+If you don't need any of the MaxMind data, but you still want to create a fast, easy-to-query database keyed on IPs and IP ranges, you can consult this example code showing [how to create an MMDB file from scratch](https://github.com/maxmind/mmdbwriter/blob/master/examples/asn-writer/main.go).
 
 ### Prerequisites
 
@@ -12,10 +12,12 @@ Another option is available if you want to [create an MMDB file from scratch](ht
 - [Go 1.14](https://golang.org/dl/) or later must be installed, and `go` must be in your `$PATH`
 - the [`mmdbinspect`](https://github.com/maxmind/mmdbinspect) tool must be installed, and be in your `$PATH`
 - a copy of the [GeoLite2 Country](https://dev.maxmind.com/geoip/geoip2/geolite2/) database must be in your working directory
-- your working directory (which can be located under any parent directory) must be named `mmdb-from-go-blogpost` (this will be the case if you clone the code using the instructions below)
+- your working directory (which can be located under any parent directory) must be named `mmdb-from-go-blogpost` (if you clone the code using the instructions below, this directory will be created in the appropriate place)
 - a basic understanding of [Go](https://gobyexample.com/) and of [IP addresses](https://en.wikipedia.org/wiki/IP_address) and [CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation) will be helpful, but allowances have been made for the intrepid explorer for whom these concepts are novel!
 
 ### AcmeCorp's data
+
+For the purposes of this tutorial, I have mocked up some data for a fictional company, AcmeCorp. This method can be adapted for your own real data, as long as that data maps to IPs or IP ranges.
 
 AcmeCorp has three departments:
 - SRE, whose IPs come from the 56.0.0.0/16 range,
@@ -27,8 +29,6 @@ Members of the SRE department have access to all three of AcmeCorp's environment
 The GeoLite2 Country MMDB file has a map, or nothing, associated with every IP range.
 
 For each of the AcmeCorp ranges, we're going to make sure a map does get returned when we query for the ranges or any subranges of them, and that the map will contain `AcmeCorp.Environments` and `AcmeCorp.DeptName` keys, as well as any keys that were contained in the original GeoLite2 Country record, if one existed. More on this later.
-
-Note that this is mocked up data for the purposes of illustrating how to augment an MMDB; you can use your own real data instead.
 
 ### Adding the new fields to GeoLite2 Country
 
@@ -47,11 +47,18 @@ The full code is presented in the next section. Let's dive in!
 
 ### The code, explained
 
-Our repo is [available on GitHub](https://github.com/maxmind/mmdb-from-go-blogpost). You can clone it locally and `cd` into the repo dir by running `git clone https://github.com/maxmind/mmdb-from-go-blogpost.git && cd mmdb-from-go-blogpost` from a terminal.
+The repo for this tutorial is [available on GitHub](https://github.com/maxmind/mmdb-from-go-blogpost). You can clone it locally and `cd` into the repo dir by running the following in a terminal window:
+
+```bash
+me@myhost:~/dev/mmdb-from-go-blogpost $ git clone https://github.com/maxmind/mmdb-from-go-blogpost.git
+me@myhost:~/dev/mmdb-from-go-blogpost $ cd mmdb-from-go-blogpost
+```
+
+Now I’m going to break down the contents of main.go from the repo, the code that will perform steps 1-3 of the tutorial. If you prefer to read the code directly, you can skip to the next section.
 
 What follows is an annotated version of `main.go` from the repo. You don't actually have to do anything more until you reach the next section of this document; we're just describing the program so that you can follow along. Alternatively, you can skip to the next section or stick to reading the code if this explanation is all familiar to you.
 
-Most Go programs begin with a `package main`, a list of `import`s, and a `func main() {`. These define the start of the source code file that contains the program, the list of other packages that the program depends upon, and the initial point in the program's execution, respectively. In our case, the imported packages include some from the standard library: [`log`](https://golang.org/pkg/log/), which we use for outputting in error scenarios; [`net`](https://golang.org/pkg/net/), for the `net.ParseCIDR` function and the `net.IPNet` type, which we use when inserting new data into the MMDB tree; and [`os`](https://golang.org/pkg/os/), which we use when creating a new file into which we will write the MMDB tree. We also import some packages from MaxMind's [`mmdbwriter`](https://github.com/maxmind/mmdbwriter/) repo, which are designed specifically for building MMDB files and for working with MMDB trees -- you'll see how we use those below.
+Most Go programs begin with a `package main`, a list of `import`s, and a `main` function. These define the start of the source code file that contains the program, the list of other packages that the program depends upon, and the initial point in the program's execution, respectively. In our case, the imported packages include some from the standard library: [`log`](https://golang.org/pkg/log/), which we use for outputting in error scenarios; [`net`](https://golang.org/pkg/net/), for the `net.ParseCIDR` function and the `net.IPNet` type, which we use when inserting new data into the MMDB tree; and [`os`](https://golang.org/pkg/os/), which we use when creating a new file into which we will write the MMDB tree. We also import some packages from MaxMind's [`mmdbwriter`](https://github.com/maxmind/mmdbwriter/) repo, which are designed specifically for building MMDB files and for working with MMDB trees -- you'll see how we use those below.
 
 ```go
 package main
@@ -69,7 +76,7 @@ import (
 func main() {
 ```
 
-Here we're at the start of the program execution. We begin by loading the existing database, the one we're going to augment.
+Here we're at the start of the program execution. We begin by loading the existing database, `GeoLite2-Country.mmdb`, that we're going to augment.
 
 ```go
 	// Load the database we wish to augment.
