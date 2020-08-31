@@ -50,8 +50,8 @@ The full code is presented in the next section. Let's dive in!
 The repo for this tutorial is [available on GitHub](https://github.com/maxmind/mmdb-from-go-blogpost). You can clone it locally and `cd` into the repo dir by running the following in a terminal window:
 
 ```bash
-me@myhost:~/dev/mmdb-from-go-blogpost $ git clone https://github.com/maxmind/mmdb-from-go-blogpost.git
-me@myhost:~/dev/mmdb-from-go-blogpost $ cd mmdb-from-go-blogpost
+me@myhost:~/dev $ git clone https://github.com/maxmind/mmdb-from-go-blogpost.git
+me@myhost:~/dev $ cd mmdb-from-go-blogpost
 ```
 
 Now I’m going to break down the contents of `main.go` from the repo, the code that will perform steps 1-3 of the tutorial. If you prefer to read the code directly, you can skip to the next section.
