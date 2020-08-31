@@ -56,7 +56,7 @@ me@myhost:~/dev/mmdb-from-go-blogpost $ cd mmdb-from-go-blogpost
 
 Now I’m going to break down the contents of `main.go` from the repo, the code that will perform steps 1-3 of the tutorial. If you prefer to read the code directly, you can skip to the next section.
 
-All Go programs begin with a `package main`, indicating that this file will contain a `main` function, the start of our program's execution. This program is on exception.
+All Go programs begin with a `package main`, indicating that this file will contain a `main` function, the start of our program's execution. This program is no exception.
 
 ```go
 package main
