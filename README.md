@@ -88,7 +88,7 @@ Having loaded the existing GeoLite2 Country database, we begin defining the data
 		log.Fatal(err)
 	}
 ```
-`sreData` is that data we will be merging into the existing records for the SRE range. We must define this data in terms of the [`mmdbtype.DataType`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#DataType) [interface](https://gobyexample.com/interfaces). `mmdbwriter` uses this interface to determine the data type to associate with the data when inserting it into the database.
+`sreData` is the data we will be merging into the existing records for the SRE range. We must define this data in terms of the [`mmdbtype.DataType`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#DataType) [interface](https://gobyexample.com/interfaces). `mmdbwriter` uses this interface to determine the data type to associate with the data when inserting it into the database.
 
 As the existing GeoLite2 Country records are maps, we use a [`mmdbtype.Map`](https://pkg.go.dev/github.com/maxmind/mmdbwriter/mmdbtype?tab=doc#Map) as the top level data structure. This map contains our two new keys, `AcmeCorp.DeptName` and `AcmeCorp.Environments`.
 
