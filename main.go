@@ -11,8 +11,7 @@ import (
 )
 
 func main() {
-
-	// Load the database we wish to augment.
+	// Load the database we wish to enrich.
 	writer, err := mmdbwriter.Load("GeoLite2-Country.mmdb", mmdbwriter.Options{})
 	if err != nil {
 		log.Fatal(err)
@@ -65,7 +64,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Write the newly augmented DB to the filesystem.
+	// Write the newly enriched DB to the filesystem.
 	fh, err := os.Create("GeoLite2-Country-with-Department-Data.mmdb")
 	if err != nil {
 		log.Fatal(err)
