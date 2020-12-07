@@ -17,7 +17,7 @@ docker build . -t mmdb-from-go
 This will build your Docker container, build your `Go` code and also run the example code for you. To log in to your container, run this command. (Linux users may need to preface this command with `sudo`).
 
 ```bash
-docker run -it --volume $PWD:/project mmdb-from-go:latest /bin/bash
+docker run -it --volume $(pwd):/project mmdb-from-go:latest /bin/bash
 ```
 
 Once you have logged in, you can test out your freshly created database:
