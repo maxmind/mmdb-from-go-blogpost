@@ -15,4 +15,5 @@ RUN apt-get update && apt-get install less
 
 WORKDIR /project
 
-RUN go build && ./mmdb-from-go-blogpost
+RUN go build
+RUN ./mmdb-from-go-blogpost
