@@ -8,13 +8,13 @@ A `Dockerfile` has been provided in order to make this code more convenient to r
 
 ## Building Your Docker Container
 
-After you have checked out this repository and added `GeoLite2-Country.mmdb` to the root directory of the repository, run this command from the root directory:
+After you have checked out this repository and added `GeoLite2-Country.mmdb` to the root directory of the repository, run this command from the root directory. (Linux users may need to preface this command with `sudo`).
 
 ```bash
 docker build . -t mmdb-from-go
 ```
 
-This will build your Docker container, build your `Go` code and also run the example code for you. To log in to your container:
+This will build your Docker container, build your `Go` code and also run the example code for you. To log in to your container, run this command. (Linux users may need to preface this command with `sudo`).
 
 ```bash
 docker run -it --volume $PWD:/project mmdb-from-go:latest /bin/bash
