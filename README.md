@@ -184,4 +184,10 @@ The [output](https://gist.github.com/nchelluri/ad079300b92a634bc4b36249b77f3893)
 
 And that's it! You've now built yourself a GeoLite2 Country MMDB file enriched with custom data.
 
+### Using Docker or Vagrant
+
+The code repository comes with a [Dockerfile](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/Dockerfile) and a [Vagrantfile](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/Vagrantfile) included. If you'd like to begin work in an environment which has all of the necessary software dependencies pre-installed, see our documentation for getting started with [Docker](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/README-Docker.md) and [Vagrant](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/README-Vagrant.md).
+
+### Contacting Us
+
 Feel free to open an issue in the [repo](https://github.com/maxmind/mmdb-from-go-blogpost/issues) if you have any questions or just want to tell us what you've created.
