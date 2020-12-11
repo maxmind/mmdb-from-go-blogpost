@@ -15,6 +15,10 @@ If you don't need any of the MaxMind data, but you still want to create a fast, 
 - your working directory (which can be located under any parent directory) must be named `mmdb-from-go-blogpost` (if you clone the code using the instructions below, this directory will be created for you)
 - a basic understanding of [Go](https://gobyexample.com/) and of [IP addresses](https://en.wikipedia.org/wiki/IP_address) and [CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation) will be helpful, but allowances have been made for the intrepid explorer for whom these concepts are novel!
 
+### Using Docker or Vagrant
+
+The code repository comes with a [Dockerfile](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/Dockerfile) and a [Vagrantfile](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/Vagrantfile) included. If you'd like to begin work in an environment which has all of the necessary software dependencies pre-installed, see our documentation for getting started with [Docker](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/README-Docker.md) and [Vagrant](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/README-Vagrant.md).
+
 ### AcmeCorp's data
 
 For the purposes of this tutorial, I have mocked up some data for a fictional company, AcmeCorp. This method can be adapted for your own real data, as long as that data maps to IP addresses or IP address ranges.
@@ -183,10 +187,6 @@ me@myhost:~/dev/mmdb-from-go-blogpost $ mmdbinspect -db GeoLite2-Country.mmdb -d
 The [output](https://gist.github.com/nchelluri/ad079300b92a634bc4b36249b77f3893) from this command, elided here for brevity, shows us that the `AcmeCorp.Environments` and `AcmeCorp.DeptName` keys are not present in the original MMDB file at all and that they are present in the enriched MMDB file when expected. The 56.3.0.1 IP address remains identical across both databases (without any AcmeCorp fields) as a control.
 
 And that's it! You've now built yourself a GeoLite2 Country MMDB file enriched with custom data.
-
-### Using Docker or Vagrant
-
-The code repository comes with a [Dockerfile](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/Dockerfile) and a [Vagrantfile](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/Vagrantfile) included. If you'd like to begin work in an environment which has all of the necessary software dependencies pre-installed, see our documentation for getting started with [Docker](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/README-Docker.md) and [Vagrant](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/README-Vagrant.md).
 
 ### Contacting Us
 
