@@ -1,10 +1,10 @@
 ### Enriching MMDB files with your own data using Go
 
-[MaxMind DB](https://github.com/maxmind/MaxMind-DB/blob/master/MaxMind-DB-spec.md) (or MMDB) files facilitate the storage and retrieval of data in connection with IP addresses and IP address ranges, making queries for such data very fast and easy to perform. While MMDB files are usable on a variety of platforms and in a number of different programming languages, this article will focus on building MMDB files using the [Go programming language](https://golang.org/).
+[MaxMind DB](https://github.com/maxmind/MaxMind-DB/blob/main/MaxMind-DB-spec.md) (or MMDB) files facilitate the storage and retrieval of data in connection with IP addresses and IP address ranges, making queries for such data very fast and easy to perform. While MMDB files are usable on a variety of platforms and in a number of different programming languages, this article will focus on building MMDB files using the [Go programming language](https://golang.org/).
 
 MaxMind offers several prebuilt MMDB files, like the free [GeoLite2 Country](https://dev.maxmind.com/geoip/geoip2/geolite2/) MMDB file. For many situations these MMDB files are useful enough as is. If, however, you have your own data associated with IP address ranges, you can create hybrid MMDB files, enriching existing MMDB contents with your own data. In this article, we're going to add details about a fictional company's IP address ranges to the GeoLite2 Country MMDB file. We'll be building a new MMDB file, one that contains both MaxMind's and our fictional company's data.
 
-If you don't need any of the MaxMind data, but you still want to create a fast, easy-to-query database keyed on IP addresses and IP address ranges, you can consult this example code showing [how to create an MMDB file from scratch](https://github.com/maxmind/mmdbwriter/blob/master/examples/asn-writer/main.go).
+If you don't need any of the MaxMind data, but you still want to create a fast, easy-to-query database keyed on IP addresses and IP address ranges, you can consult this example code showing [how to create an MMDB file from scratch](https://github.com/maxmind/mmdbwriter/blob/main/examples/asn-writer/main.go).
 
 ### Prerequisites
 
@@ -17,7 +17,7 @@ If you don't need any of the MaxMind data, but you still want to create a fast, 
 
 ### Using Docker or Vagrant
 
-The code repository comes with a [Dockerfile](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/Dockerfile) and a [Vagrantfile](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/Vagrantfile) included. If you'd like to begin work in an environment which has all of the necessary software dependencies pre-installed, see our documentation for getting started with [Docker](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/README-Docker.md) and [Vagrant](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/README-Vagrant.md).
+The code repository comes with a [Dockerfile](https://github.com/maxmind/mmdb-from-go-blogpost/blob/main/Dockerfile) and a [Vagrantfile](https://github.com/maxmind/mmdb-from-go-blogpost/blob/main/Vagrantfile) included. If you'd like to begin work in an environment which has all of the necessary software dependencies pre-installed, see our documentation for getting started with [Docker](https://github.com/maxmind/mmdb-from-go-blogpost/blob/main/README-Docker.md) and [Vagrant](https://github.com/maxmind/mmdb-from-go-blogpost/blob/main/README-Vagrant.md).
 
 ### AcmeCorp's data
 
@@ -36,7 +36,7 @@ For each of the AcmeCorp ranges, we're going to add to the existing data the `Ac
 
 ### The steps we're going to take
 
-We're going to [write some Go code](https://github.com/maxmind/mmdb-from-go-blogpost/blob/master/main.go) that makes use of the MaxMind [`mmdbwriter`](https://pkg.go.dev/github.com/maxmind/mmdbwriter) Go module to:
+We're going to [write some Go code](https://github.com/maxmind/mmdb-from-go-blogpost/blob/main/main.go) that makes use of the MaxMind [`mmdbwriter`](https://pkg.go.dev/github.com/maxmind/mmdbwriter) Go module to:
 
 1. Load the GeoLite2 Country MaxMind DB.
    - We will take a pathname to the MMDB file and call [`mmdbwriter.Load()`](https://pkg.go.dev/github.com/maxmind/mmdbwriter?tab=doc#Load) on it, returning `writer`, an [`*mmdbwriter.Tree`](https://pkg.go.dev/github.com/maxmind/mmdbwriter?tab=doc#Tree).
