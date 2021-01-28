@@ -9,6 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Download test database
-        run: curl --location https://github.com/maxmind/MaxMind-DB/raw/master/test-data/GeoLite2-Country-Test.mmdb -o GeoLite2-Country.mmdb
+        run: curl --location https://github.com/maxmind/MaxMind-DB/raw/main/test-data/GeoLite2-Country-Test.mmdb -o GeoLite2-Country.mmdb
       - name: docker build
         run: docker build . -t mmdb-from-go:latest
