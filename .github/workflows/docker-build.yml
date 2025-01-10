@@ -8,6 +8,8 @@ jobs:
     name: Docker
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Download test database
         run: curl --location https://github.com/maxmind/MaxMind-DB/raw/main/test-data/GeoLite2-Country-Test.mmdb -o GeoLite2-Country.mmdb
       - name: docker build
