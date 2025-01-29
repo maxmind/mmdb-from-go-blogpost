@@ -1,7 +1,7 @@
 ---
 name: test
 on: [push, pull_request]
-
+permissions: {}
 jobs:
   docker:
     runs-on: ubuntu-latest
