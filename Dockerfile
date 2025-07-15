@@ -1,4 +1,4 @@
-FROM golang:buster
+FROM golang:bookworm
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
