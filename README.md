@@ -9,7 +9,7 @@ If you don't need any of the MaxMind data, but you still want to create a fast, 
 ### Prerequisites
 
 - you must have [`git`](https://git-scm.com/downloads) installed in order to clone the code and install the dependencies, and it must be in your `$PATH`
-- [Go 1.14](https://golang.org/dl/) or later must be installed, and `go` must be in your `$PATH`
+- [Go 1.25](https://golang.org/dl/) or later must be installed, and `go` must be in your `$PATH`
 - the [`mmdbinspect`](https://github.com/maxmind/mmdbinspect) tool must be installed and be in your `$PATH`
 - a copy of the [GeoLite2 Country](https://dev.maxmind.com/geoip/geoip2/geolite2/) database must be in your working directory
 - your working directory (which can be located under any parent directory) must be named `mmdb-from-go-blogpost` (if you clone the code using the instructions below, this directory will be created for you)
@@ -194,7 +194,7 @@ Feel free to open an issue in the [repo](https://github.com/maxmind/mmdb-from-go
 
 # Copyright and License
 
-This software is Copyright (c) 2020-2023 by MaxMind, Inc.
+This software is Copyright (c) 2020-2026 by MaxMind, Inc.
 
 This is free software, licensed under the [Apache License, Version
 2.0](LICENSE-APACHE) or the [MIT License](LICENSE-MIT), at your option.
