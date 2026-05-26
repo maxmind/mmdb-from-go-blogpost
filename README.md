@@ -194,7 +194,7 @@ Feel free to open an issue in the [repo](https://github.com/maxmind/mmdb-from-go
 
 # Copyright and License
 
-This software is Copyright (c) 2020-2023 by MaxMind, Inc.
+This software is Copyright (c) 2020-2026 by MaxMind, Inc.
 
 This is free software, licensed under the [Apache License, Version
 2.0](LICENSE-APACHE) or the [MIT License](LICENSE-MIT), at your option.
