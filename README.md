@@ -84,7 +84,7 @@ func main() {
 		log.Fatal(err)
 	}
 ```
-Having loaded the existing GeoLite2 Country database, we begin defining the data we wish to enrich it with. The second return value of the [`net.ParseCIDR()`](https://pkg.go.dev/net#ParseCIDR) function is of type [`*net.IPNet`](https://pkg.go.dev/net#IPNet), which is what we need for the first parameter for our upcoming [`writer.InsertFunc()`](https://pkg.go.dev/github.com/maxmind/mmdbwriter#Tree.InsertFunc) call, so we use `net.ParseCIDR()` to go from the `string`-literal CIDR form `"56.0.0.0/16"` to the desired `*net.IPnet`.
+Having loaded the existing GeoLite2 Country database, we begin defining the data we wish to enrich it with. The second return value of the [`net.ParseCIDR()`](https://pkg.go.dev/net#ParseCIDR) function is of type [`*net.IPNet`](https://pkg.go.dev/net#IPNet), which is what we need for the first parameter for our upcoming [`writer.InsertFunc()`](https://pkg.go.dev/github.com/maxmind/mmdbwriter#Tree.InsertFunc) call, so we use `net.ParseCIDR()` to go from the `string`-literal CIDR form `"56.0.0.0/16"` to the desired `*net.IPNet`.
 ```go
 	// Define and insert the new data.
 	_, sreNet, err := net.ParseCIDR("56.0.0.0/16")
