@@ -8,7 +8,7 @@ If you don't need any of the MaxMind data, but you still want to create a fast, 
 
 ### Prerequisites
 
-- you must have [`git`](https://git-scm.com/downloads/) installed in order to clone the code and install the dependencies, and it must be in your `$PATH`
+- you must have [`git`](https://git-scm.com/install/) installed in order to clone the code and install the dependencies, and it must be in your `$PATH`
 - [Go 1.25](https://go.dev/dl/) or later must be installed, and `go` must be in your `$PATH`
 - the [`mmdbinspect`](https://github.com/maxmind/mmdbinspect) tool must be installed and be in your `$PATH`
 - a copy of the [GeoLite2 Country](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data/) database must be in your working directory
