@@ -1,3 +1,4 @@
 *.mmdb
 /mmdb-from-go-blogpost
 .vagrant
+.lycheecache
